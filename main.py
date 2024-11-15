@@ -41,10 +41,9 @@ class KeywordQueryEventListener(EventListener):
                 "payload": payload_json,
                 "signature": signature
             }
-            jwt_text = json.dumps(jwt_json, indent=2)
             items.append(ExtensionResultItem(icon='images/jwt.svg',
-                                                 name=f"{jwt_text}",
-                                                 on_enter=CopyToClipboardAction(jwt_text))
+                                                name=f"{json.dumps(jwt_json, indent=2)}",
+                                                on_enter=CopyToClipboardAction(json.dumps(jwt_json, indent=2))))
             
         except Exception as e:
             items.append(ExtensionResultItem(icon='images/jwt.svg',
