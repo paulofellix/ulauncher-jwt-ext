@@ -1,6 +1,7 @@
 import json
 import logging
 import base64
+import webbrowser
 from ulauncher.api.client.Extension import Extension
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.shared.event import KeywordQueryEvent, ItemEnterEvent
@@ -43,6 +44,10 @@ class KeywordQueryEventListener(EventListener):
             }
             items.append(ExtensionResultItem(icon='images/jwt.svg',
                                                 name=f"{json.dumps(jwt_json, indent=2)}",
+                                                on_alt_enter=ExtensionCustomAction({
+                                                    'action': 'launch_jwtio',
+                                                    'token': token
+                                                }),
                                                 on_enter=CopyToClipboardAction(json.dumps(jwt_json, indent=2))))
             
         except Exception as e:
@@ -55,7 +60,10 @@ class KeywordQueryEventListener(EventListener):
 class ItemEnterEventListener(EventListener):
     def on_event(self, event, extension):
         data = event.get_data()
-        return RenderResultListAction([ExtensionResultItem(icon='images/jwt.svg',
+        if (data['action'] == 'launch_jwtio'):
+            webbrowser.open(f"https://jwt.io?token={data['token']}")
+        else:
+            return RenderResultListAction([ExtensionResultItem(icon='images/jwt.svg',
                                                            name=data.get('new_name', 'No data available'),
                                                            on_enter=HideWindowAction())])
 
